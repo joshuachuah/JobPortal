@@ -9,7 +9,7 @@ import java.util.List;
 public class UsersType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userTypeId;
 
     private String userTypeName;
@@ -20,10 +20,10 @@ public class UsersType {
     public UsersType() {
     }
 
-    public UsersType(int userTypeId, List<Users> users, String userTypeName) {
+    public UsersType(int userTypeId, String userTypeName, List<Users> users) {
         this.userTypeId = userTypeId;
-        this.users = users;
         this.userTypeName = userTypeName;
+        this.users = users;
     }
 
     public int getUserTypeId() {
@@ -34,20 +34,20 @@ public class UsersType {
         this.userTypeId = userTypeId;
     }
 
-    public List<Users> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<Users> users) {
-        this.users = users;
-    }
-
     public String getUserTypeName() {
         return userTypeName;
     }
 
     public void setUserTypeName(String userTypeName) {
         this.userTypeName = userTypeName;
+    }
+
+    public List<Users> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<Users> users) {
+        this.users = users;
     }
 
     @Override
