@@ -42,14 +42,39 @@ public class JobSeekerApplyController {
     public String display(@PathVariable("id") int id, Model model) {
         JobPostActivity jobDetails = jobPostActivityService.getOne(id);
         List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getJobCandidates(jobDetails);
-        List<JobSeekerSave> jobseekerSaveList = jobSeekerSaveService.getJobCandidates(jobDetails);
+        List<JobSeekerSave> jobSeekerSaveList = jobSeekerSaveService.getJobCandidates(jobDetails);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))){
                 RecruiterProfile user = recruiterProfileService.getCurrentRecruiterPrfile();
+                if (user != null) {
+                    model.addAttribute("applyList", jobSeekerApplyList);
+                }
+            }else {
+                JobSeekerProfile user = jobSeekerProfileService.getCurrentSeekerProfile();
+                if (user != null) {
+                    boolean exists = false;
+                    boolean saved = false;
+                    for (JobSeekerApply jobSeekerApply : jobSeekerApplyList) {
+                        if (jobSeekerApply.getUserId().getUserAccountId() == user.getUserAccountId()) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    for (JobSeekerSave jobSeekerSave : jobSeekerSaveList) {
+                        if (jobSeekerSave.getUserId().getUserAccountId() == user.getUserAccountId()) {
+                            saved = true;
+                            break;
+                        }
+                    }
+                    model.addAttribute("alreadyApplied", exists);
+                    model.addAttribute("alreadySaved", saved);
+                }
             }
         }
+
+        JobSeekerApply jobSeekerApply = new JobSeekerApply();
         model.addAttribute("jobDetails", jobDetails);
         model.addAttribute("user", usersService.getCurrentUserProfile());
         return "job-details";
